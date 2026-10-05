@@ -65,6 +65,88 @@ const FIXED = { x: WIN.x / (1 - RATIO), y: WIN.y / (1 - RATIO) };
 const DEPTH = 6;
 const ZOOM_SECONDS = 3.7;
 
+const TAPE_CELLS = 10;
+const TAPE_STEP = 0.36;
+const TAPE_CYCLE = 5.2;
+const CELL = 64;
+const CELL_GAP = 12;
+
+const IterationTape: React.FC<{ sec: number; p: number }> = ({ sec, p }) => {
+  const u = sec % TAPE_CYCLE;
+  const pos = Math.min(TAPE_CELLS, u / TAPE_STEP);
+  const idx = Math.floor(pos);
+  const frac = pos - idx;
+  const eased = frac < 0.5 ? 2 * frac * frac : 1 - Math.pow(-2 * frac + 2, 2) / 2;
+  const head = Math.min(TAPE_CELLS - 1, idx + (idx < TAPE_CELLS ? eased : 0));
+  const fade = u > TAPE_CYCLE - 0.5 ? Math.max(0, (TAPE_CYCLE - u) / 0.5) : 1;
+  const cur = Math.min(TAPE_CELLS - 1, idx);
+  const X0 = 112;
+  const Y0 = 150;
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          left: X0,
+          top: 92,
+          fontFamily: F.mono,
+          fontWeight: 600,
+          fontSize: 32,
+          color: C.dim,
+          fontVariantLigatures: "none",
+          opacity: Math.min(1, p),
+        }}
+      >
+        {`for i in [1 .. ${TAPE_CELLS}]  `}
+        <span style={{ color: C.amber }}>{`i = ${Math.min(TAPE_CELLS, idx + 1)}`}</span>
+      </div>
+      {Array.from({ length: TAPE_CELLS }, (_, i) => {
+        const done = i < idx || idx >= TAPE_CELLS;
+        const on = done ? fade : 0;
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: X0 + i * (CELL + CELL_GAP),
+              top: Y0,
+              width: CELL,
+              height: CELL,
+              borderRadius: 14,
+              border: `3px solid ${on > 0.5 ? C.mint : C.line}`,
+              background: `rgba(134,224,168,${0.2 * on})`,
+              color: on > 0.5 ? C.mint : C.faint,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: F.mono,
+              fontWeight: 700,
+              fontSize: 28,
+              opacity: Math.min(1, p),
+              transform: `scale(${i === cur && idx < TAPE_CELLS ? 1.06 : 1})`,
+            }}
+          >
+            {on > 0.5 ? "✓" : i + 1}
+          </div>
+        );
+      })}
+      <div
+        style={{
+          position: "absolute",
+          left: X0 + head * (CELL + CELL_GAP) - 7,
+          top: Y0 - 7,
+          width: CELL + 14,
+          height: CELL + 14,
+          borderRadius: 18,
+          border: `4px solid ${C.amber}`,
+          boxShadow: "0 0 22px rgba(242,193,125,0.6)",
+          opacity: Math.min(1, p) * fade,
+        }}
+      />
+    </>
+  );
+};
+
 const ClockCtx = createContext(0);
 
 const useClock = () => {
@@ -94,17 +176,10 @@ const QuoteFace: React.FC = () => {
         </span>
       );
     });
-  const ang = sec * 6.6;
   const ring = s(0, 0, POP);
   return (
     <Slide>
-      <svg width={300} height={200} style={{ position: "absolute", left: 100, top: 90, overflow: "visible", opacity: Math.min(1, ring) }}>
-        <circle cx={70} cy={70} r={52} fill="none" stroke={C.line} strokeWidth={5} />
-        <circle cx={70 + 52 * Math.cos(ang)} cy={70 + 52 * Math.sin(ang)} r={11} fill={C.amber} style={{ filter: "drop-shadow(0 0 10px rgba(242,193,125,0.8))" }} />
-      </svg>
-      <At x={250} y={128} step={0} delay={6} size={40} weight={600} color={C.dim} font={F.mono} style={{ fontVariantLigatures: "none" }}>
-        {`i = ${Math.floor(sec * 10) % 100}`}
-      </At>
+      <IterationTape sec={sec} p={ring} />
       <div style={{ position: "absolute", left: 110, top: 290, fontFamily: F.head, fontWeight: 800, fontSize: 88, lineHeight: 1.2, color: C.text }}>
         <div>{words("To iterate is human,", 8)}</div>
         <div>{words("to recurse, divine.", 40, C.accentHi)}</div>
