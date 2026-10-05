@@ -96,6 +96,9 @@ const QuoteSlide: React.FC = () => {
       <At x={190} y={780} step={1} delay={24} size={38} weight={400} color={C.dim} font={F.mono}>
         L. Peter Deutsch
       </At>
+      <At x={190} y={850} w={1500} step={1} delay={40} size={34} weight={400} color={C.dim}>
+        Цитату наведено в книзі Дональда Кнута «Мистецтво програмування»
+      </At>
     </Slide>
   );
 };
