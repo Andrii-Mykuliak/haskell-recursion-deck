@@ -8,7 +8,7 @@ import { A, Arrow, At, Chip, Lead, M, Slide } from "../deck/ui";
 const FORMS: { n: string; t: string; d: string; code: string }[] = [
   { n: "1", t: "Лінійна рекурсія", d: "один рекурсивний виклик", code: "factorial n =\n  n * factorial (n - 1)" },
   { n: "2", t: "Розгалужена рекурсія", d: "кілька рекурсивних викликів", code: "fib n =\n  fib (n - 1)\n  + fib (n - 2)" },
-  { n: "3", t: "Взаємна рекурсія", d: "функції викликають одна одну", code: "isEven n\n  → isOdd (n - 1)" },
+  { n: "3", t: "Взаємна рекурсія", d: "функції викликають одна одну", code: "isEven 0 = True\nisEven n = isOdd (n - 1)\nisOdd 0 = False\nisOdd n = isEven (n - 1)" },
 ];
 
 const FormCard: React.FC<{ i: number }> = ({ i }) => {
