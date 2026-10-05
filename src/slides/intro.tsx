@@ -65,29 +65,57 @@ const FIXED = { x: WIN.x / (1 - RATIO), y: WIN.y / (1 - RATIO) };
 const DEPTH = 6;
 const ZOOM_SECONDS = 3.7;
 
-const TAPE_CELLS = 10;
-const TAPE_STEP = 0.36;
-const TAPE_CYCLE = 5.2;
+const TAPE_STEP = 0.3;
 const CELL = 64;
 const CELL_GAP = 12;
+const PITCH = CELL + CELL_GAP;
+const TAPE_X0 = 112;
+const TAPE_STOP = 1500;
 
 const IterationTape: React.FC<{ sec: number; p: number }> = ({ sec, p }) => {
-  const u = sec % TAPE_CYCLE;
-  const pos = Math.min(TAPE_CELLS, u / TAPE_STEP);
+  const pos = sec / TAPE_STEP;
   const idx = Math.floor(pos);
   const frac = pos - idx;
   const eased = frac < 0.5 ? 2 * frac * frac : 1 - Math.pow(-2 * frac + 2, 2) / 2;
-  const head = Math.min(TAPE_CELLS - 1, idx + (idx < TAPE_CELLS ? eased : 0));
-  const fade = u > TAPE_CYCLE - 0.5 ? Math.max(0, (TAPE_CYCLE - u) / 0.5) : 1;
-  const cur = Math.min(TAPE_CELLS - 1, idx);
-  const X0 = 112;
+  const headW = (idx + eased) * PITCH;
+  const cam = Math.max(0, headW - (TAPE_STOP - TAPE_X0));
+  const first = Math.max(0, Math.floor(cam / PITCH) - 1);
+  const last = first + Math.ceil(1920 / PITCH) + 3;
   const Y0 = 150;
+  const cells: React.ReactNode[] = [];
+  for (let i = first; i <= last; i++) {
+    const done = i < idx;
+    cells.push(
+      <div
+        key={i}
+        style={{
+          position: "absolute",
+          left: TAPE_X0 + i * PITCH - cam,
+          top: 10,
+          width: CELL,
+          height: CELL,
+          borderRadius: 14,
+          border: `3px solid ${done ? C.mint : C.line}`,
+          background: done ? "rgba(134,224,168,0.2)" : "transparent",
+          color: done ? C.mint : C.faint,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: F.mono,
+          fontWeight: 700,
+          fontSize: 26,
+        }}
+      >
+        {done ? "✓" : i + 1}
+      </div>,
+    );
+  }
   return (
     <>
       <div
         style={{
           position: "absolute",
-          left: X0,
+          left: TAPE_X0,
           top: 92,
           fontFamily: F.mono,
           fontWeight: 600,
@@ -97,52 +125,35 @@ const IterationTape: React.FC<{ sec: number; p: number }> = ({ sec, p }) => {
           opacity: Math.min(1, p),
         }}
       >
-        {`for i in [1 .. ${TAPE_CELLS}]  `}
-        <span style={{ color: C.amber }}>{`i = ${Math.min(TAPE_CELLS, idx + 1)}`}</span>
+        {"for i in [1 .. ∞]  "}
+        <span style={{ color: C.amber }}>{`i = ${idx + 1}`}</span>
       </div>
-      {Array.from({ length: TAPE_CELLS }, (_, i) => {
-        const done = i < idx || idx >= TAPE_CELLS;
-        const on = done ? fade : 0;
-        return (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: X0 + i * (CELL + CELL_GAP),
-              top: Y0,
-              width: CELL,
-              height: CELL,
-              borderRadius: 14,
-              border: `3px solid ${on > 0.5 ? C.mint : C.line}`,
-              background: `rgba(134,224,168,${0.2 * on})`,
-              color: on > 0.5 ? C.mint : C.faint,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontFamily: F.mono,
-              fontWeight: 700,
-              fontSize: 28,
-              opacity: Math.min(1, p),
-              transform: `scale(${i === cur && idx < TAPE_CELLS ? 1.06 : 1})`,
-            }}
-          >
-            {on > 0.5 ? "✓" : i + 1}
-          </div>
-        );
-      })}
       <div
         style={{
           position: "absolute",
-          left: X0 + head * (CELL + CELL_GAP) - 7,
-          top: Y0 - 7,
-          width: CELL + 14,
-          height: CELL + 14,
-          borderRadius: 18,
-          border: `4px solid ${C.amber}`,
-          boxShadow: "0 0 22px rgba(242,193,125,0.6)",
-          opacity: Math.min(1, p) * fade,
+          left: 0,
+          top: Y0 - 10,
+          width: 1920,
+          height: CELL + 20,
+          opacity: Math.min(1, p),
+          maskImage: "linear-gradient(90deg, transparent 0px, transparent 70px, black 230px, black 1740px, transparent 1920px)",
+          WebkitMaskImage: "linear-gradient(90deg, transparent 0px, transparent 70px, black 230px, black 1740px, transparent 1920px)",
         }}
-      />
+      >
+        {cells}
+        <div
+          style={{
+            position: "absolute",
+            left: TAPE_X0 + headW - cam - 7,
+            top: 3,
+            width: CELL + 14,
+            height: CELL + 14,
+            borderRadius: 18,
+            border: `4px solid ${C.amber}`,
+            boxShadow: "0 0 22px rgba(242,193,125,0.6)",
+          }}
+        />
+      </div>
     </>
   );
 };
@@ -205,9 +216,6 @@ const QuoteFace: React.FC = () => {
       </At>
       <At x={110} y={800} w={900} step={1} delay={40} size={30} weight={400} color={C.dim}>
         Цитату наведено в книзі Дональда Кнута «Мистецтво програмування»
-      </At>
-      <At x={WIN.x} y={WIN.y + WIN.h + 36} step={0} delay={70} size={34} weight={600} color={C.mint} font={F.mono} style={{ fontVariantLigatures: "none" }}>
-        {"picture = frame picture"}
       </At>
       <div
         style={{
