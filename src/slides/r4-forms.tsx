@@ -23,7 +23,7 @@ const FormCard: React.FC<{ i: number }> = ({ i }) => {
         left: x,
         top: 340,
         width: 560,
-        height: 430,
+        height: 520,
         borderRadius: 20,
         background: C.panel,
         border: `3px solid ${C.line}`,
