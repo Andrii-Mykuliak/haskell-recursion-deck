@@ -263,9 +263,6 @@ const S12M: React.FC = () => {
       <At x={96} y={760} w={1000} step={4} size={38}>
         <M c={C.amber}>fib 4</M> — <A>5 обчислень</A> замість 9 викликів: кожне значення рахується один раз.
       </At>
-      <At x={96} y={900} w={1720} step={5} size={32} weight={400} color={C.dim}>
-        Список <M>fibs</M> заповнюється за потреби — це ліниві обчислення, наступна лекція.
-      </At>
     </Slide>
   );
 };
@@ -420,7 +417,7 @@ const S15: React.FC = () => {
 export const r5Slides: SlideDef[] = [
   { id: "forms", title: "Форми рекурсії", steps: [40, 55, 55, 55], C: S11 },
   { id: "fib", title: "Наївний Fibonacci", steps: [40, 55, 75, 55, 55], C: S12 },
-  { id: "memo", title: "Мемоїзація", steps: [40, 50, 55, 85, 55, 55], C: S12M },
+  { id: "memo", title: "Мемоїзація", steps: [40, 50, 55, 85, 55], C: S12M },
   { id: "mutual", title: "Взаємна рекурсія", steps: [40, 55, 70, 60], C: S13 },
   { id: "acc", title: "Акумулятор", steps: [40, 55, 45, 45, 55], C: S14 },
   { id: "go-trace", title: "go 4 1", steps: [40, 30, 30, 30, 30, 30, 40, 55], C: S15 },
