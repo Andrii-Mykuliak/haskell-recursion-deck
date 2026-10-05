@@ -187,6 +187,89 @@ const S12: React.FC = () => (
   </Slide>
 );
 
+/* 12b · Мемоїзація */
+const MEMO_ROWS: [string, string][] = [
+  ["", "0"],
+  ["", "1"],
+  ["1 + 0", "1"],
+  ["1 + 1", "2"],
+  ["2 + 1", "3"],
+];
+
+const S12M: React.FC = () => {
+  const { s } = useSteps();
+  const cell = (label: string, left: number, top: number, w: number, p: number, color: string, head = false) => (
+    <div
+      style={{
+        position: "absolute",
+        left,
+        top,
+        width: w,
+        height: 66,
+        border: `3px solid ${head ? C.accent : C.line}`,
+        background: head ? "rgba(141,118,220,0.2)" : C.panel,
+        color,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: F.mono,
+        fontWeight: 700,
+        fontSize: 32,
+        opacity: Math.min(1, p),
+        transform: `translateY(${(1 - p) * 14}px)`,
+      }}
+    >
+      {label}
+    </div>
+  );
+  const X = 1180;
+  return (
+    <Slide title="Мемоїзація">
+      <Lead>
+        Повторні підзадачі можна не рахувати знову: результат кожної підзадачі зберігається в таблиці і береться звідти.
+      </Lead>
+      <Code
+        x={96}
+        y={340}
+        size={36}
+        step={1}
+        code={`
+          fibs :: [Integer]
+          fibs = map fibMemo [0 ..]
+        `}
+      />
+      <Code
+        x={96}
+        y={470}
+        size={36}
+        step={2}
+        code={`
+          fibMemo :: Int -> Integer
+          fibMemo 0 = 0
+          fibMemo 1 = 1
+          fibMemo n = [[3|fibs !! (n - 1) + fibs !! (n - 2)]]
+        `}
+      />
+      {cell("n", X, 340, 90, s(3, 0), C.lav, true)}
+      {cell("з таблиці", X + 90, 340, 220, s(3, 0), C.dim, true)}
+      {cell("fibs !! n", X + 310, 340, 210, s(3, 0), C.amber, true)}
+      {MEMO_ROWS.map(([expr, val], i) => (
+        <React.Fragment key={i}>
+          {cell(String(i), X, 420 + i * 72, 90, s(3, 8 + i * 12), C.lav)}
+          {cell(expr || "—", X + 90, 420 + i * 72, 220, s(3, 8 + i * 12), C.mint)}
+          {cell(val, X + 310, 420 + i * 72, 210, s(3, 8 + i * 12), C.amber)}
+        </React.Fragment>
+      ))}
+      <At x={96} y={760} w={1000} step={4} size={38}>
+        <M c={C.amber}>fib 4</M> — <A>5 обчислень</A> замість 9 викликів: кожне значення рахується один раз.
+      </At>
+      <At x={96} y={900} w={1720} step={5} size={32} weight={400} color={C.dim}>
+        Список <M>fibs</M> заповнюється за потреби — це ліниві обчислення, наступна лекція.
+      </At>
+    </Slide>
+  );
+};
+
 /* 13 · Взаємна рекурсія */
 const S13: React.FC = () => (
   <Slide title="Взаємна рекурсія">
@@ -337,6 +420,7 @@ const S15: React.FC = () => {
 export const r5Slides: SlideDef[] = [
   { id: "forms", title: "Форми рекурсії", steps: [40, 55, 55, 55], C: S11 },
   { id: "fib", title: "Наївний Fibonacci", steps: [40, 55, 75, 55, 55], C: S12 },
+  { id: "memo", title: "Мемоїзація", steps: [40, 50, 55, 85, 55, 55], C: S12M },
   { id: "mutual", title: "Взаємна рекурсія", steps: [40, 55, 70, 60], C: S13 },
   { id: "acc", title: "Акумулятор", steps: [40, 55, 45, 45, 55], C: S14 },
   { id: "go-trace", title: "go 4 1", steps: [40, 30, 30, 30, 30, 30, 40, 55], C: S15 },
