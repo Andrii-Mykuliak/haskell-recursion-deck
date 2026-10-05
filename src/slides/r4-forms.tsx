@@ -117,7 +117,7 @@ const FibTree: React.FC = () => {
               x1={f.x}
               y1={f.y + 26}
               x2={f.x + (t.x - f.x) * p}
-              y2={f.y + 26 + (t.y - 26 - f.y) * p}
+              y2={f.y + 26 + (t.y - 26 - (f.y + 26)) * p}
               stroke={C.accent}
               strokeWidth={3}
               strokeLinecap="round"
