@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { AbsoluteFill, interpolate } from "remotion";
 import { C, F } from "../deck/theme";
 import { mix, POP, SlideDef, useSteps } from "../deck/steps";
@@ -63,11 +63,28 @@ const WIN = { x: 1020, y: 290, w: 820, h: 461 };
 const RATIO = WIN.w / 1920;
 const FIXED = { x: WIN.x / (1 - RATIO), y: WIN.y / (1 - RATIO) };
 const DEPTH = 6;
-const ZOOM_FROM = 40;
-const ZOOM_CYCLE = 110;
+const ZOOM_SECONDS = 3.7;
+
+const ClockCtx = createContext(0);
+
+const useClock = () => {
+  const [sec, setSec] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = () => {
+      setSec((performance.now() - t0) / 1000);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return sec;
+};
 
 const QuoteFace: React.FC = () => {
-  const { s, frame: f } = useSteps();
+  const { s } = useSteps();
+  const sec = useContext(ClockCtx);
   const words = (str: string, base: number, color?: string) =>
     str.split(" ").map((w, i) => {
       const p = s(0, base + i * 7, POP);
@@ -77,7 +94,7 @@ const QuoteFace: React.FC = () => {
         </span>
       );
     });
-  const ang = f * 0.11;
+  const ang = sec * 6.6;
   const ring = s(0, 0, POP);
   return (
     <Slide>
@@ -86,7 +103,7 @@ const QuoteFace: React.FC = () => {
         <circle cx={70 + 52 * Math.cos(ang)} cy={70 + 52 * Math.sin(ang)} r={11} fill={C.amber} style={{ filter: "drop-shadow(0 0 10px rgba(242,193,125,0.8))" }} />
       </svg>
       <At x={250} y={128} step={0} delay={6} size={40} weight={600} color={C.dim} font={F.mono} style={{ fontVariantLigatures: "none" }}>
-        {`i = ${Math.floor(f / 6) % 100}`}
+        {`i = ${Math.floor(sec * 10) % 100}`}
       </At>
       <div style={{ position: "absolute", left: 110, top: 290, fontFamily: F.head, fontWeight: 800, fontSize: 88, lineHeight: 1.2, color: C.text }}>
         <div>{words("To iterate is human,", 8)}</div>
@@ -135,10 +152,12 @@ const QuoteFace: React.FC = () => {
 };
 
 const QuoteSlide: React.FC = () => {
-  const { s, frame: f } = useSteps();
-  const phase = (Math.max(0, f - ZOOM_FROM) / ZOOM_CYCLE) % 1;
+  const { s } = useSteps();
+  const sec = useClock();
+  const phase = (sec / ZOOM_SECONDS) % 1;
   const appear = s(0, 40, POP);
   return (
+    <ClockCtx.Provider value={sec}>
     <AbsoluteFill style={{ background: C.bg }}>
       <QuoteFace />
       <div
@@ -187,6 +206,7 @@ const QuoteSlide: React.FC = () => {
         }}
       />
     </AbsoluteFill>
+    </ClockCtx.Provider>
   );
 };
 
