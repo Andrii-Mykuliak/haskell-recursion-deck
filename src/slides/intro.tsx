@@ -59,7 +59,7 @@ const TitleSlide: React.FC = () => {
   );
 };
 
-const WIN = { x: 1020, y: 290, w: 820, h: 461 };
+const WIN = { x: 970, y: 360, w: 850, h: 478 };
 const RATIO = WIN.w / 1920;
 const FIXED = { x: WIN.x / (1 - RATIO), y: WIN.y / (1 - RATIO) };
 const DEPTH = 6;
@@ -191,7 +191,7 @@ const QuoteFace: React.FC = () => {
   return (
     <Slide>
       <IterationTape sec={sec} p={ring} />
-      <div style={{ position: "absolute", left: 110, top: 290, fontFamily: F.head, fontWeight: 800, fontSize: 88, lineHeight: 1.2, color: C.text }}>
+      <div style={{ position: "absolute", left: 110, top: 330, fontFamily: F.head, fontWeight: 800, fontSize: 84, lineHeight: 1.2, color: C.text }}>
         <div>{words("To iterate is human,", 8)}</div>
         <div>{words("to recurse, divine.", 40, C.accentHi)}</div>
       </div>
@@ -199,22 +199,22 @@ const QuoteFace: React.FC = () => {
         style={{
           position: "absolute",
           left: 116,
-          top: 560,
+          top: 590,
           height: 6,
           width: mix(0, 420, s(1, 0)),
           background: `linear-gradient(90deg, ${C.accent}, ${C.pink})`,
           borderRadius: 3,
         }}
       />
-      <At x={110} y={600} w={900} step={1} delay={6} size={50} weight={600} color={C.text}>
+      <At x={110} y={630} w={820} step={1} delay={6} size={50} weight={600} color={C.text}>
         Ітерація - від людини,
         <br />
         рекурсія - від Бога
       </At>
-      <At x={110} y={740} step={1} delay={24} size={34} weight={400} color={C.dim} font={F.mono}>
+      <At x={110} y={778} step={1} delay={24} size={34} weight={400} color={C.dim} font={F.mono}>
         L. Peter Deutsch
       </At>
-      <At x={110} y={800} w={900} step={1} delay={40} size={30} weight={400} color={C.dim}>
+      <At x={110} y={836} w={820} step={1} delay={40} size={30} weight={400} color={C.dim}>
         Цитату наведено в книзі Дональда Кнута «Мистецтво програмування»
       </At>
       <div
