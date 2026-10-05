@@ -59,6 +59,47 @@ const TitleSlide: React.FC = () => {
   );
 };
 
+const QuoteSlide: React.FC = () => {
+  const { s } = useSteps();
+  const words = (str: string, base: number, color?: string) =>
+    str.split(" ").map((w, i) => {
+      const p = s(0, base + i * 7, POP);
+      return (
+        <span key={i} style={{ display: "inline-block", whiteSpace: "pre", opacity: Math.min(1, p), transform: `translateY(${(1 - p) * 40}px)`, color }}>
+          {w + " "}
+        </span>
+      );
+    });
+  return (
+    <Slide>
+      <div style={{ position: "absolute", left: 96, top: 90, fontFamily: F.head, fontWeight: 800, fontSize: 380, lineHeight: 1, color: C.accent, opacity: 0.35 * s(0, 0) }}>
+        “
+      </div>
+      <div style={{ position: "absolute", left: 190, top: 330, fontFamily: F.head, fontWeight: 800, fontSize: 100, lineHeight: 1.2, color: C.text }}>
+        <div>{words("To iterate is human,", 10)}</div>
+        <div>{words("to recurse, divine.", 40, C.accentHi)}</div>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 196,
+          top: 610,
+          height: 6,
+          width: mix(0, 420, s(1, 0)),
+          background: `linear-gradient(90deg, ${C.accent}, ${C.pink})`,
+          borderRadius: 3,
+        }}
+      />
+      <At x={190} y={650} w={1500} step={1} delay={6} size={56} weight={600} color={C.text}>
+        Ітерація - від людини, рекурсія - від Бога
+      </At>
+      <At x={190} y={780} step={1} delay={24} size={38} weight={400} color={C.dim} font={F.mono}>
+        L. Peter Deutsch
+      </At>
+    </Slide>
+  );
+};
+
 const AGENDA = [
   "Рекурсія як спосіб опису обчислення",
   "Базовий і рекурсивний випадки",
@@ -136,6 +177,7 @@ const Agenda: React.FC<{ active?: number }> = ({ active }) => {
 
 export const introSlides: SlideDef[] = [
   { id: "title", title: "Титул", steps: [90], C: TitleSlide },
+  { id: "quote", title: "Епіграф", steps: [100, 60], C: QuoteSlide },
   { id: "agenda", title: "План", steps: [60], C: () => <Agenda /> },
 ];
 
