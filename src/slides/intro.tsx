@@ -205,7 +205,7 @@ const QuoteFace: React.FC = () => {
         L. Peter Deutsch
       </At>
       <At x={110} y={836} w={820} step={1} delay={40} size={30} weight={400} color={C.dim}>
-        Цитату наведено в книзі Дональда Кнута «Мистецтво програмування»
+        Цитату наведено в книзі Дональда Кнута <span style={{ whiteSpace: "nowrap" }}>«Мистецтво програмування»</span>
       </At>
       <div
         style={{
