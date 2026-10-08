@@ -172,7 +172,7 @@ const Outro: React.FC = () => {
             color: "transparent",
           }}
         >
-          made with Claude Sonnet 5.5
+          made with Claude Opus 5.5
         </span>
       </div>
     </AbsoluteFill>
